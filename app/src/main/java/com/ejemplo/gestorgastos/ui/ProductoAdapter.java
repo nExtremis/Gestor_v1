@@ -1,12 +1,18 @@
 package com.ejemplo.gestorgastos.ui;
 
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.ejemplo.gestorgastos.R;
+import com.ejemplo.gestorgastos.dao.ProductoDAO;
 import com.ejemplo.gestorgastos.model.Producto;
 import java.util.List;
 import java.util.Locale;
@@ -14,9 +20,14 @@ import java.util.Locale;
 public class ProductoAdapter extends RecyclerView.Adapter<ProductoAdapter.ProductoViewHolder> {
 
     private List<Producto> productoList;
+    private Context context;
+    private ProductoDAO productoDAO;
 
-    public ProductoAdapter(List<Producto> productoList) {
+    public ProductoAdapter(List<Producto> productoList, Context context) {
         this.productoList = productoList;
+        this.context = context;
+        this.productoDAO = new ProductoDAO(context);
+        this.productoDAO.open();
     }
 
     @NonNull
@@ -33,6 +44,31 @@ public class ProductoAdapter extends RecyclerView.Adapter<ProductoAdapter.Produc
         holder.tvPrecioCosto.setText(String.format(Locale.getDefault(), "$%.2f", producto.getPrecioCosto()));
         holder.tvPrecioVentaMenor.setText(String.format(Locale.getDefault(), "$%.2f", producto.getPrecioVentaMenor()));
         holder.tvPrecioVentaMayor.setText(String.format(Locale.getDefault(), "$%.2f", producto.getPrecioVentaMayor()));
+
+        holder.btnEdit.setOnClickListener(v -> {
+            Intent intent = new Intent(context, ProductoActivity.class);
+            intent.putExtra("ID", producto.getId());
+            intent.putExtra("NOMBRE", producto.getNombre());
+            intent.putExtra("PRECIO_COSTO", producto.getPrecioCosto());
+            intent.putExtra("PRECIO_VENTA_MENOR", producto.getPrecioVentaMenor());
+            intent.putExtra("PRECIO_VENTA_MAYOR", producto.getPrecioVentaMayor());
+            context.startActivity(intent);
+        });
+
+        holder.btnDelete.setOnClickListener(v -> {
+            new AlertDialog.Builder(context)
+                .setTitle("Eliminar Producto")
+                .setMessage("¿Estás seguro de que quieres eliminar " + producto.getNombre() + "?")
+                .setPositiveButton("Sí", (dialog, which) -> {
+                    productoDAO.deleteProducto(producto.getId());
+                    productoList.remove(position);
+                    notifyItemRemoved(position);
+                    notifyItemRangeChanged(position, productoList.size());
+                    Toast.makeText(context, "Producto eliminado", Toast.LENGTH_SHORT).show();
+                })
+                .setNegativeButton("No", null)
+                .show();
+        });
     }
 
     @Override
@@ -42,6 +78,7 @@ public class ProductoAdapter extends RecyclerView.Adapter<ProductoAdapter.Produc
 
     public static class ProductoViewHolder extends RecyclerView.ViewHolder {
         TextView tvNombre, tvPrecioCosto, tvPrecioVentaMenor, tvPrecioVentaMayor;
+        ImageButton btnEdit, btnDelete;
 
         public ProductoViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -49,6 +86,8 @@ public class ProductoAdapter extends RecyclerView.Adapter<ProductoAdapter.Produc
             tvPrecioCosto = itemView.findViewById(R.id.tvPrecioCosto);
             tvPrecioVentaMenor = itemView.findViewById(R.id.tvPrecioVentaMenor);
             tvPrecioVentaMayor = itemView.findViewById(R.id.tvPrecioVentaMayor);
+            btnEdit = itemView.findViewById(R.id.btnEditProducto);
+            btnDelete = itemView.findViewById(R.id.btnDeleteProducto);
         }
     }
 }

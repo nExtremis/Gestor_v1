@@ -26,8 +26,12 @@ public class ListadoVentasActivity extends AppCompatActivity {
         ventaDAO = new VentaDAO(this);
         ventaDAO.open();
 
+        actualizarLista();
+    }
+
+    private void actualizarLista() {
         List<Venta> listaVentas = ventaDAO.getAllVentas();
-        adapter = new VentaAdapter(listaVentas);
+        adapter = new VentaAdapter(listaVentas, this); // Pasamos 'this' como context
         rvVentas.setAdapter(adapter);
     }
 
@@ -35,9 +39,7 @@ public class ListadoVentasActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         if (ventaDAO != null) {
-            List<Venta> listaVentas = ventaDAO.getAllVentas();
-            adapter = new VentaAdapter(listaVentas);
-            rvVentas.setAdapter(adapter);
+            actualizarLista();
         }
     }
 

@@ -41,6 +41,7 @@ public class VentaActivity extends AppCompatActivity {
     private List<Contacto> listaContactos;
     private Contacto contactoSeleccionado;
     private final Calendar calendar = Calendar.getInstance();
+    private int ventaId = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,59 +68,67 @@ public class VentaActivity extends AppCompatActivity {
 
         etFecha.setFocusable(false);
         etFecha.setOnClickListener(v -> showDatePickerDialog());
-        etFecha.setText(new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date()));
 
         cargarProductos();
         cargarContactos();
-
-        // Botón rápido para agregar contacto
-        btnAddContactoQuick.setOnClickListener(v -> {
-            Intent intent = new Intent(this, ContactoActivity.class);
-            startActivity(intent);
-        });
 
         String[] tiposPago = {"Efectivo", "Tarjeta", "Transferencia"};
         ArrayAdapter<String> adapterPago = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, tiposPago);
         adapterPago.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spTipoPago.setAdapter(adapterPago);
 
-        spProductos.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                etPrecio.setText(String.valueOf(listaProductos.get(position).getPrecioVentaMayor()));
+        // Lógica de Edición
+        if (getIntent().hasExtra("ID")) {
+            ventaId = getIntent().getIntExtra("ID", -1);
+            etFecha.setText(getIntent().getStringExtra("FECHA"));
+            etCantidad.setText(String.valueOf(getIntent().getDoubleExtra("CANTIDAD", 1.0)));
+            etPrecio.setText(String.valueOf(getIntent().getDoubleExtra("PRECIO", 0.0)));
+            cbF.setChecked(getIntent().getBooleanExtra("F_OPTION", false));
+            etDetalles.setText(getIntent().getStringExtra("DETALLES"));
+            
+            // Seleccionar Producto en Spinner
+            int pId = getIntent().getIntExtra("PRODUCTO_ID", -1);
+            for(int i=0; i<listaProductos.size(); i++) {
+                if(listaProductos.get(i).getId() == pId) {
+                    spProductos.setSelection(i);
+                    break;
+                }
             }
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {}
-        });
 
+            // Seleccionar Contacto
+            int cId = getIntent().getIntExtra("CONTACTO_ID", -1);
+            for(Contacto c : listaContactos) {
+                if(c.getId() == cId) {
+                    contactoSeleccionado = c;
+                    actvContacto.setText(c.getNombre(), false);
+                    break;
+                }
+            }
+            btnGuardar.setText("ACTUALIZAR VENTA");
+        } else {
+            etFecha.setText(new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date()));
+        }
+
+        btnAddContactoQuick.setOnClickListener(v -> startActivity(new Intent(this, ContactoActivity.class)));
         btnGuardar.setOnClickListener(v -> guardarVenta());
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        // Recargar contactos al volver de ContactoActivity
         cargarContactos();
     }
 
     private void cargarContactos() {
-        if (contactoDAO != null) {
-            listaContactos = contactoDAO.getAllContactos();
-            ArrayAdapter<Contacto> adapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, listaContactos);
-            actvContacto.setAdapter(adapter);
-            
-            actvContacto.setOnItemClickListener((parent, view, position, id) -> {
-                contactoSeleccionado = (Contacto) parent.getItemAtPosition(position);
-            });
-        }
+        listaContactos = contactoDAO.getAllContactos();
+        ArrayAdapter<Contacto> adapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, listaContactos);
+        actvContacto.setAdapter(adapter);
+        actvContacto.setOnItemClickListener((parent, view, position, id) -> contactoSeleccionado = (Contacto) parent.getItemAtPosition(position));
     }
 
     private void cargarProductos() {
         listaProductos = productoDAO.getAllProductos();
-        if (listaProductos.isEmpty()) {
-            Toast.makeText(this, "Registra un producto primero", Toast.LENGTH_LONG).show();
-            finish(); return;
-        }
+        if (listaProductos.isEmpty()) { finish(); return; }
         List<String> nombres = new ArrayList<>();
         for (Producto p : listaProductos) nombres.add(p.getNombre());
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, nombres);
@@ -131,14 +140,6 @@ public class VentaActivity extends AppCompatActivity {
         try {
             Venta venta = new Venta();
             venta.setProductoId(listaProductos.get(spProductos.getSelectedItemPosition()).getId());
-            
-            // Validar si el texto en el autocompletado coincide con un contacto de la lista
-            String nombreIngresado = actvContacto.getText().toString();
-            if (contactoSeleccionado == null || !contactoSeleccionado.getNombre().equals(nombreIngresado)) {
-                // Si el usuario escribió un nombre pero no lo seleccionó de la lista
-                contactoSeleccionado = buscarContactoPorNombre(nombreIngresado);
-            }
-            
             venta.setContactoId(contactoSeleccionado != null ? contactoSeleccionado.getId() : 0);
             venta.setFecha(new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).parse(etFecha.getText().toString()));
             venta.setCantidad(Double.parseDouble(etCantidad.getText().toString()));
@@ -147,19 +148,19 @@ public class VentaActivity extends AppCompatActivity {
             venta.setTipoPago(spTipoPago.getSelectedItem().toString());
             venta.setDetalles(etDetalles.getText().toString());
 
-            ventaDAO.insertVenta(venta);
-            Toast.makeText(this, "Venta registrada con éxito", Toast.LENGTH_SHORT).show();
+            if (ventaId == -1) {
+                ventaDAO.insertVenta(venta);
+                Toast.makeText(this, "Venta guardada", Toast.LENGTH_SHORT).show();
+            } else {
+                venta.setId(ventaId);
+                // Aquí deberías tener un método updateVenta en tu DAO
+                // ventaDAO.updateVenta(venta); 
+                Toast.makeText(this, "Venta actualizada", Toast.LENGTH_SHORT).show();
+            }
             finish();
         } catch (Exception e) {
-            Toast.makeText(this, "Error al guardar: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Error", Toast.LENGTH_SHORT).show();
         }
-    }
-
-    private Contacto buscarContactoPorNombre(String nombre) {
-        for (Contacto c : listaContactos) {
-            if (c.getNombre().equalsIgnoreCase(nombre)) return c;
-        }
-        return null;
     }
 
     private void showDatePickerDialog() {

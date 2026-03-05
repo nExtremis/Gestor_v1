@@ -29,7 +29,7 @@ public class VentaDAO {
     public long insertVenta(Venta venta) {
         ContentValues values = new ContentValues();
         values.put("productoId", venta.getProductoId());
-        values.put("contactoId", venta.getContactoId()); // Nuevo: Guardar el contacto
+        values.put("contactoId", venta.getContactoId());
         values.put("fecha", venta.getFecha() != null ? venta.getFecha().getTime() : new Date().getTime());
         values.put("cantidad", venta.getCantidad());
         values.put("precio", venta.getPrecio());
@@ -39,13 +39,30 @@ public class VentaDAO {
         return db.insert("ventas", null, values);
     }
 
+    public int updateVenta(Venta venta) {
+        ContentValues values = new ContentValues();
+        values.put("productoId", venta.getProductoId());
+        values.put("contactoId", venta.getContactoId());
+        values.put("fecha", venta.getFecha() != null ? venta.getFecha().getTime() : new Date().getTime());
+        values.put("cantidad", venta.getCantidad());
+        values.put("precio", venta.getPrecio());
+        values.put("f_option", venta.isF() ? 1 : 0);
+        values.put("tipo_pago", venta.getTipoPago());
+        values.put("detalles", venta.getDetalles());
+        return db.update("ventas", values, "id = ?", new String[]{String.valueOf(venta.getId())});
+    }
+
+    public int deleteVenta(int id) {
+        return db.delete("ventas", "id = ?", new String[]{String.valueOf(id)});
+    }
+
     public List<Venta> getAllVentas() {
         List<Venta> ventas = new ArrayList<>();
-        // JOIN triple para obtener nombres de producto y contacto
         String query = "SELECT v.*, p.nombre as nombre_producto, c.nombre as nombre_contacto " +
                        "FROM ventas v " +
                        "INNER JOIN productos p ON v.productoId = p.id " +
-                       "LEFT JOIN contactos c ON v.contactoId = c.id"; // LEFT JOIN por si no se eligió contacto
+                       "LEFT JOIN contactos c ON v.contactoId = c.id " +
+                       "ORDER BY v.fecha DESC";
         
         Cursor cursor = db.rawQuery(query, null);
         
@@ -54,19 +71,15 @@ public class VentaDAO {
                 Venta venta = new Venta();
                 venta.setId(cursor.getInt(cursor.getColumnIndexOrThrow("id")));
                 venta.setProductoId(cursor.getInt(cursor.getColumnIndexOrThrow("productoId")));
+                venta.setContactoId(cursor.getInt(cursor.getColumnIndexOrThrow("contactoId")));
                 venta.setNombreProducto(cursor.getString(cursor.getColumnIndexOrThrow("nombre_producto")));
-                
-                // Nuevo: Nombre del contacto
-                int contactoIdx = cursor.getColumnIndex("nombre_contacto");
-                if (contactoIdx != -1) {
-                    venta.setDetalles(cursor.getString(contactoIdx)); // Reusamos detalles o añadimos un campo en el modelo
-                }
-
+                venta.setNombreContacto(cursor.getString(cursor.getColumnIndexOrThrow("nombre_contacto")));
                 venta.setFecha(new Date(cursor.getLong(cursor.getColumnIndexOrThrow("fecha"))));
                 venta.setCantidad(cursor.getDouble(cursor.getColumnIndexOrThrow("cantidad")));
                 venta.setPrecio(cursor.getDouble(cursor.getColumnIndexOrThrow("precio")));
                 venta.setF(cursor.getInt(cursor.getColumnIndexOrThrow("f_option")) == 1);
                 venta.setTipoPago(cursor.getString(cursor.getColumnIndexOrThrow("tipo_pago")));
+                venta.setDetalles(cursor.getString(cursor.getColumnIndexOrThrow("detalles")));
                 ventas.add(venta);
             } while (cursor.moveToNext());
             cursor.close();

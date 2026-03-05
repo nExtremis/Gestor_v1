@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">GestorGastos</string>
+    <string name="app_name">Gestor de Negocio</string>
     <string name="btn_gasto">Gastos</string>
     <string name="btn_venta">Ventas</string>
     <string name="btn_producto">Productos</string>

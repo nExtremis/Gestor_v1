@@ -16,14 +16,15 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
-            app:title="Gestor de Negocio"
             app:titleTextColor="@android:color/white" />
 
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/tabLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:tabIndicatorColor="@android:color/white"
+            android:contentDescription="Pestañas de navegación principal"
+            app:tabIndicatorColor="#BDBDBD"
+            app:tabIndicatorHeight="3dp"
             app:tabSelectedTextColor="@android:color/white"
             app:tabTextColor="#BDBDBD" />
     </com.google.android.material.appbar.AppBarLayout>

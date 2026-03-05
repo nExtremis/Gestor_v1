@@ -26,19 +26,20 @@ public class ListadoGastosActivity extends AppCompatActivity {
         gastoDAO = new GastoDAO(this);
         gastoDAO.open();
 
+        actualizarLista();
+    }
+
+    private void actualizarLista() {
         List<Gasto> listaGastos = gastoDAO.getAllGastos();
-        adapter = new GastoAdapter(listaGastos);
+        adapter = new GastoAdapter(listaGastos, this); // Pasamos 'this' como context
         rvGastos.setAdapter(adapter);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        // Actualizar la lista si volvemos de agregar un gasto
         if (gastoDAO != null) {
-            List<Gasto> listaGastos = gastoDAO.getAllGastos();
-            adapter = new GastoAdapter(listaGastos);
-            rvGastos.setAdapter(adapter);
+            actualizarLista();
         }
     }
 

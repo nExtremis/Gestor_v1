@@ -26,8 +26,12 @@ public class ListadoProductosActivity extends AppCompatActivity {
         productoDAO = new ProductoDAO(this);
         productoDAO.open();
 
+        actualizarLista();
+    }
+
+    private void actualizarLista() {
         List<Producto> listaProductos = productoDAO.getAllProductos();
-        adapter = new ProductoAdapter(listaProductos);
+        adapter = new ProductoAdapter(listaProductos, this); // Pasamos 'this' como context
         rvProductos.setAdapter(adapter);
     }
 
@@ -35,9 +39,7 @@ public class ListadoProductosActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         if (productoDAO != null) {
-            List<Producto> listaProductos = productoDAO.getAllProductos();
-            adapter = new ProductoAdapter(listaProductos);
-            rvProductos.setAdapter(adapter);
+            actualizarLista();
         }
     }
 

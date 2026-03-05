@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
+import com.ejemplo.gestorgastos.ui.FinanzasFragment;
 import com.ejemplo.gestorgastos.ui.HistorialesFragment;
 import com.ejemplo.gestorgastos.ui.RegistrosFragment;
 import com.google.android.material.tabs.TabLayout;
@@ -25,10 +26,10 @@ public class MainActivity extends AppCompatActivity {
         viewPager.setAdapter(new MainViewPagerAdapter(this));
 
         new TabLayoutMediator(tabLayout, viewPager, (tab, position) -> {
-            if (position == 0) {
-                tab.setText("REGISTROS");
-            } else {
-                tab.setText("CONSULTAS"); // Cambiado de HISTORIALES a CONSULTAS
+            switch (position) {
+                case 0: tab.setText("REGISTROS"); break;
+                case 1: tab.setText("CONSULTAS"); break;
+                case 2: tab.setText("FINANZAS"); break;
             }
         }).attach();
     }
@@ -41,12 +42,17 @@ public class MainActivity extends AppCompatActivity {
         @NonNull
         @Override
         public Fragment createFragment(int position) {
-            return position == 0 ? new RegistrosFragment() : new HistorialesFragment();
+            switch (position) {
+                case 0: return new RegistrosFragment();
+                case 1: return new HistorialesFragment();
+                case 2: return new FinanzasFragment();
+                default: return new RegistrosFragment();
+            }
         }
 
         @Override
         public int getItemCount() {
-            return 2;
+            return 3; // Ahora son 3 pestañas
         }
     }
 }

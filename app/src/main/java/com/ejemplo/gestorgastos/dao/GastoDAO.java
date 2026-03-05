@@ -28,44 +28,34 @@ public class GastoDAO {
 
     public long insertGasto(Gasto gasto) {
         ContentValues values = new ContentValues();
-        // Guardamos los milisegundos de la fecha
         values.put("fecha", gasto.getFecha() != null ? gasto.getFecha().getTime() : new Date().getTime());
         values.put("cantidad", gasto.getCantidad());
         values.put("precio", gasto.getPrecio());
         values.put("detalles", gasto.getDetalles());
+        values.put("esProducto", gasto.isEsProducto() ? 1 : 0);
         return db.insert("gastos", null, values);
-    }
-
-    public int updateGasto(Gasto gasto) {
-        ContentValues values = new ContentValues();
-        values.put("fecha", gasto.getFecha() != null ? gasto.getFecha().getTime() : new Date().getTime());
-        values.put("cantidad", gasto.getCantidad());
-        values.put("precio", gasto.getPrecio());
-        values.put("detalles", gasto.getDetalles());
-        return db.update("gastos", values, "id = ?", new String[]{String.valueOf(gasto.getId())});
-    }
-
-    public int deleteGasto(int id) {
-        return db.delete("gastos", "id = ?", new String[]{String.valueOf(id)});
     }
 
     public List<Gasto> getAllGastos() {
         List<Gasto> gastos = new ArrayList<>();
-        Cursor cursor = db.query("gastos", null, null, null, null, null, null);
+        Cursor cursor = db.query("gastos", null, null, null, null, null, "fecha DESC");
         if (cursor != null && cursor.moveToFirst()) {
             do {
                 Gasto gasto = new Gasto();
                 gasto.setId(cursor.getInt(cursor.getColumnIndexOrThrow("id")));
-                // Leemos los milisegundos y los convertimos a un objeto Date
-                long fechaMilis = cursor.getLong(cursor.getColumnIndexOrThrow("fecha"));
-                gasto.setFecha(new Date(fechaMilis));
+                gasto.setFecha(new Date(cursor.getLong(cursor.getColumnIndexOrThrow("fecha"))));
                 gasto.setCantidad(cursor.getDouble(cursor.getColumnIndexOrThrow("cantidad")));
                 gasto.setPrecio(cursor.getDouble(cursor.getColumnIndexOrThrow("precio")));
                 gasto.setDetalles(cursor.getString(cursor.getColumnIndexOrThrow("detalles")));
+                gasto.setEsProducto(cursor.getInt(cursor.getColumnIndexOrThrow("esProducto")) == 1);
                 gastos.add(gasto);
             } while (cursor.moveToNext());
             cursor.close();
         }
         return gastos;
+    }
+
+    public int deleteGasto(int id) {
+        return db.delete("gastos", "id = ?", new String[]{String.valueOf(id)});
     }
 }

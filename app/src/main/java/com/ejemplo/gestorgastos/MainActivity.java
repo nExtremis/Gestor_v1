@@ -1,17 +1,16 @@
 package com.ejemplo.gestorgastos;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.widget.Button;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import com.ejemplo.gestorgastos.ui.GastoActivity;
-import com.ejemplo.gestorgastos.ui.ListadoGastosActivity;
-import com.ejemplo.gestorgastos.ui.ListadoProductosActivity;
-import com.ejemplo.gestorgastos.ui.ListadoVentasActivity;
-import com.ejemplo.gestorgastos.ui.ProductoActivity;
-import com.ejemplo.gestorgastos.ui.VentaActivity;
-import com.ejemplo.gestorgastos.ui.ContactoActivity;
-import com.ejemplo.gestorgastos.ui.ListadoContactosActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.viewpager2.adapter.FragmentStateAdapter;
+import androidx.viewpager2.widget.ViewPager2;
+import com.ejemplo.gestorgastos.ui.HistorialesFragment;
+import com.ejemplo.gestorgastos.ui.RegistrosFragment;
+import com.google.android.material.tabs.TabLayout;
+import com.google.android.material.tabs.TabLayoutMediator;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -20,16 +19,34 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Botones de Registro
-        findViewById(R.id.btnGasto).setOnClickListener(v -> startActivity(new Intent(this, GastoActivity.class)));
-        findViewById(R.id.btnVenta).setOnClickListener(v -> startActivity(new Intent(this, VentaActivity.class)));
-        findViewById(R.id.btnProducto).setOnClickListener(v -> startActivity(new Intent(this, ProductoActivity.class)));
-        findViewById(R.id.btnContacto).setOnClickListener(v -> startActivity(new Intent(this, ContactoActivity.class)));
+        TabLayout tabLayout = findViewById(R.id.tabLayout);
+        ViewPager2 viewPager = findViewById(R.id.viewPager);
 
-        // Botones de Historial
-        findViewById(R.id.btnVerGastos).setOnClickListener(v -> startActivity(new Intent(this, ListadoGastosActivity.class)));
-        findViewById(R.id.btnVerVentas).setOnClickListener(v -> startActivity(new Intent(this, ListadoVentasActivity.class)));
-        findViewById(R.id.btnVerProductos).setOnClickListener(v -> startActivity(new Intent(this, ListadoProductosActivity.class)));
-        findViewById(R.id.btnVerContactos).setOnClickListener(v -> startActivity(new Intent(this, ListadoContactosActivity.class)));
+        viewPager.setAdapter(new MainViewPagerAdapter(this));
+
+        new TabLayoutMediator(tabLayout, viewPager, (tab, position) -> {
+            if (position == 0) {
+                tab.setText("REGISTROS");
+            } else {
+                tab.setText("CONSULTAS"); // Cambiado de HISTORIALES a CONSULTAS
+            }
+        }).attach();
+    }
+
+    private static class MainViewPagerAdapter extends FragmentStateAdapter {
+        public MainViewPagerAdapter(@NonNull FragmentActivity fragmentActivity) {
+            super(fragmentActivity);
+        }
+
+        @NonNull
+        @Override
+        public Fragment createFragment(int position) {
+            return position == 0 ? new RegistrosFragment() : new HistorialesFragment();
+        }
+
+        @Override
+        public int getItemCount() {
+            return 2;
+        }
     }
 }

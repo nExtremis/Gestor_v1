@@ -3,6 +3,7 @@ package com.ejemplo.gestorgastos.ui;
 import android.app.DatePickerDialog;
 import android.os.Bundle;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import androidx.appcompat.app.AppCompatActivity;
 import com.ejemplo.gestorgastos.dao.GastoDAO;
@@ -16,10 +17,8 @@ import java.util.Locale;
 
 public class GastoActivity extends AppCompatActivity {
 
-    private EditText etFecha;
-    private EditText etCantidad;
-    private EditText etPrecio;
-    private EditText etDetalles;
+    private EditText etFecha, etCantidad, etPrecio, etDetalles;
+    private CheckBox cbEsProducto;
     private GastoDAO gastoDAO;
     private final Calendar calendar = Calendar.getInstance();
 
@@ -32,12 +31,12 @@ public class GastoActivity extends AppCompatActivity {
         etCantidad = findViewById(R.id.etCantidad);
         etPrecio = findViewById(R.id.etPrecio);
         etDetalles = findViewById(R.id.etDetalles);
+        cbEsProducto = findViewById(R.id.cbEsProducto);
         Button btnGuardar = findViewById(R.id.btnGuardar);
 
-        // Hacer que el EditText de fecha abra el DatePicker y no el teclado
         etFecha.setFocusable(false);
-        etFecha.setClickable(true);
         etFecha.setOnClickListener(v -> showDatePickerDialog());
+        etFecha.setText(new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date()));
 
         gastoDAO = new GastoDAO(this);
         gastoDAO.open();
@@ -52,19 +51,17 @@ public class GastoActivity extends AppCompatActivity {
             gasto.setCantidad(Double.parseDouble(etCantidad.getText().toString()));
             gasto.setPrecio(Double.parseDouble(etPrecio.getText().toString()));
             gasto.setDetalles(etDetalles.getText().toString());
+            gasto.setEsProducto(cbEsProducto.isChecked());
+
             gastoDAO.insertGasto(gasto);
-            finish(); // Cerrar actividad después de guardar
+            finish();
         });
     }
 
     private void showDatePickerDialog() {
         new DatePickerDialog(this, (view, year, month, dayOfMonth) -> {
-            calendar.set(Calendar.YEAR, year);
-            calendar.set(Calendar.MONTH, month);
-            calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-            String format = "yyyy-MM-dd";
-            SimpleDateFormat sdf = new SimpleDateFormat(format, Locale.getDefault());
-            etFecha.setText(sdf.format(calendar.getTime()));
+            calendar.set(year, month, dayOfMonth);
+            etFecha.setText(new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(calendar.getTime()));
         }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)).show();
     }
 

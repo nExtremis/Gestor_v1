@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:gravity="center_vertical">
+
+    <Button
+        android:id="@+id/btnGasto"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="12dp"
+        android:text="REGISTRAR NUEVO GASTO"
+        android:backgroundTint="#424242" />
+
+    <Button
+        android:id="@+id/btnVenta"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="12dp"
+        android:text="REGISTRAR NUEVA VENTA"
+        android:backgroundTint="#2196F3" />
+
+    <Button
+        android:id="@+id/btnProducto"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="12dp"
+        android:text="REGISTRAR NUEVO PRODUCTO"
+        android:backgroundTint="#FF9800" />
+
+    <Button
+        android:id="@+id/btnContacto"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="NUEVO CONTACTO"
+        android:backgroundTint="#9C27B0" />
+
+</LinearLayout>

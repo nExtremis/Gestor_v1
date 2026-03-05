@@ -35,6 +35,15 @@ public class GastoAdapter extends RecyclerView.Adapter<GastoAdapter.GastoViewHol
         holder.tvCantidad.setText("Cant: " + gasto.getCantidad());
         holder.tvPrecio.setText("$" + gasto.getPrecio());
         holder.tvDetalles.setText(gasto.getDetalles());
+        
+        // Mostrar etiqueta de tipo de gasto
+        if (gasto.isEsProducto()) {
+            holder.tvTipoGasto.setText("TIPO: PRODUCTO/COSTO");
+            holder.tvTipoGasto.setTextColor(0xFF1976D2); // Azul
+        } else {
+            holder.tvTipoGasto.setText("TIPO: PERSONAL");
+            holder.tvTipoGasto.setTextColor(0xFF757575); // Gris
+        }
     }
 
     @Override
@@ -43,7 +52,7 @@ public class GastoAdapter extends RecyclerView.Adapter<GastoAdapter.GastoViewHol
     }
 
     public static class GastoViewHolder extends RecyclerView.ViewHolder {
-        TextView tvFecha, tvCantidad, tvPrecio, tvDetalles;
+        TextView tvFecha, tvCantidad, tvPrecio, tvDetalles, tvTipoGasto;
 
         public GastoViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -51,6 +60,7 @@ public class GastoAdapter extends RecyclerView.Adapter<GastoAdapter.GastoViewHol
             tvCantidad = itemView.findViewById(R.id.tvCantidad);
             tvPrecio = itemView.findViewById(R.id.tvPrecio);
             tvDetalles = itemView.findViewById(R.id.tvDetalles);
+            tvTipoGasto = itemView.findViewById(R.id.tvTipoGasto);
         }
     }
 }

@@ -44,7 +44,6 @@ public class ContactoAdapter extends RecyclerView.Adapter<ContactoAdapter.Contac
         holder.tvTelefono.setText("Tel: " + contacto.getTelefono());
         holder.tvDireccion.setText("Dir: " + contacto.getDireccion());
 
-        // Acción de WhatsApp
         holder.btnWhatsapp.setOnClickListener(v -> {
             String telefono = contacto.getTelefono();
             if (telefono == null || telefono.isEmpty()) {
@@ -52,11 +51,19 @@ public class ContactoAdapter extends RecyclerView.Adapter<ContactoAdapter.Contac
                 return;
             }
 
-            // Limpiar el número: solo dejar dígitos
+            // Limpiar: dejar solo dígitos
             String soloNumeros = telefono.replaceAll("[^0-9]", "");
             
-            // Si el número no tiene código de país, podrías añadir el de tu país por defecto.
-            // Ejemplo para Argentina (+54): if (!soloNumeros.startsWith("54")) soloNumeros = "54" + soloNumeros;
+            // Lógica automática para Argentina (54 + 9 + prefijo + numero)
+            // Si tiene 10 dígitos (ej 11 2233 4455), le agregamos 549
+            if (soloNumeros.length() == 10) {
+                soloNumeros = "549" + soloNumeros;
+            } 
+            // Si tiene 11 dígitos y empieza con 15 (ej 11 15 2233 4455), corregimos a formato internacional
+            else if (soloNumeros.length() == 11 && soloNumeros.startsWith("15")) {
+                 // Esto es más complejo, lo ideal es agendar sin el 15. 
+                 // Por ahora, priorizamos el formato de 10 dígitos + prefijo.
+            }
 
             try {
                 String url = "https://wa.me/" + soloNumeros;
@@ -68,7 +75,6 @@ public class ContactoAdapter extends RecyclerView.Adapter<ContactoAdapter.Contac
             }
         });
 
-        // Acción de Editar
         holder.btnEdit.setOnClickListener(v -> {
             Intent intent = new Intent(context, ContactoActivity.class);
             intent.putExtra("ID", contacto.getId());
@@ -78,7 +84,6 @@ public class ContactoAdapter extends RecyclerView.Adapter<ContactoAdapter.Contac
             context.startActivity(intent);
         });
 
-        // Acción de Eliminar con Confirmación
         holder.btnDelete.setOnClickListener(v -> {
             new AlertDialog.Builder(context)
                 .setTitle("Eliminar Contacto")
@@ -88,7 +93,6 @@ public class ContactoAdapter extends RecyclerView.Adapter<ContactoAdapter.Contac
                     contactoList.remove(position);
                     notifyItemRemoved(position);
                     notifyItemRangeChanged(position, contactoList.size());
-                    Toast.makeText(context, "Contacto eliminado", Toast.LENGTH_SHORT).show();
                 })
                 .setNegativeButton("No", null)
                 .show();

@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">GestorGastos</string>
+    <string name="btn_gasto">Gastos</string>
+    <string name="btn_venta">Ventas</string>
+    <string name="btn_producto">Productos</string>
+    <string name="hint_fecha">Fecha</string>
+    <string name="hint_cantidad">Cantidad</string>
+    <string name="hint_precio">Precio</string>
+    <string name="hint_detalles">Detalles</string>
+    <string name="hint_nombre">Nombre</string>
+    <string name="btn_guardar">Guardar</string>
+</resources>

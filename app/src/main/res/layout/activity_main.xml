@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:gravity="center_horizontal"
+    android:background="#F5F5F5">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="GESTOR DE NEGOCIO"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="24dp"
+        android:textColor="#333333"/>
+
+    <!-- Seccion de Registros -->
+    <Button
+        android:id="@+id/btnGasto"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:text="REGISTRAR NUEVO GASTO" />
+
+    <Button
+        android:id="@+id/btnVenta"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:text="REGISTRAR NUEVA VENTA" />
+
+    <Button
+        android:id="@+id/btnProducto"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:text="REGISTRAR NUEVO PRODUCTO" />
+
+    <Button
+        android:id="@+id/btnContacto"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp"
+        android:backgroundTint="#9C27B0"
+        android:text="NUEVO CONTACTO" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#CCCCCC"
+        android:layout_marginBottom="24dp"/>
+
+    <!-- Seccion de Historiales -->
+    <Button
+        android:id="@+id/btnVerGastos"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:backgroundTint="#4CAF50"
+        android:text="VER HISTORIAL GASTOS" />
+
+    <Button
+        android:id="@+id/btnVerVentas"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:backgroundTint="#2196F3"
+        android:text="VER HISTORIAL VENTAS" />
+
+    <Button
+        android:id="@+id/btnVerProductos"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:backgroundTint="#FF9800"
+        android:text="VER LISTA PRODUCTOS" />
+
+    <Button
+        android:id="@+id/btnVerContactos"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:backgroundTint="#E91E63"
+        android:text="VER AGENDA CONTACTOS" />
+
+</LinearLayout>

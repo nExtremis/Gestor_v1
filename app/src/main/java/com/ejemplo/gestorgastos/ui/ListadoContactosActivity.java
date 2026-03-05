@@ -27,7 +27,7 @@ public class ListadoContactosActivity extends AppCompatActivity {
         contactoDAO.open();
 
         List<Contacto> listaContactos = contactoDAO.getAllContactos();
-        adapter = new ContactoAdapter(listaContactos);
+        adapter = new ContactoAdapter(listaContactos, this);
         rvContactos.setAdapter(adapter);
     }
 
@@ -36,7 +36,7 @@ public class ListadoContactosActivity extends AppCompatActivity {
         super.onResume();
         if (contactoDAO != null) {
             List<Contacto> listaContactos = contactoDAO.getAllContactos();
-            adapter = new ContactoAdapter(listaContactos);
+            adapter = new ContactoAdapter(listaContactos, this);
             rvContactos.setAdapter(adapter);
         }
     }

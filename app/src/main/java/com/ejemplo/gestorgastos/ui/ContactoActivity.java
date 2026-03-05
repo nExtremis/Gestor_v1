@@ -13,6 +13,7 @@ public class ContactoActivity extends AppCompatActivity {
 
     private EditText etNombre, etTelefono, etDireccion;
     private ContactoDAO contactoDAO;
+    private int contactoId = -1; // -1 significa que es un nuevo contacto
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,6 +28,15 @@ public class ContactoActivity extends AppCompatActivity {
         contactoDAO = new ContactoDAO(this);
         contactoDAO.open();
 
+        // Verificar si estamos editando (recibiendo datos por Intent)
+        if (getIntent().hasExtra("ID")) {
+            contactoId = getIntent().getIntExtra("ID", -1);
+            etNombre.setText(getIntent().getStringExtra("NOMBRE"));
+            etTelefono.setText(getIntent().getStringExtra("TELEFONO"));
+            etDireccion.setText(getIntent().getStringExtra("DIRECCION"));
+            btnGuardar.setText("ACTUALIZAR CONTACTO");
+        }
+
         btnGuardar.setOnClickListener(v -> {
             String nombre = etNombre.getText().toString();
             if (nombre.isEmpty()) {
@@ -39,12 +49,21 @@ public class ContactoActivity extends AppCompatActivity {
             contacto.setTelefono(etTelefono.getText().toString());
             contacto.setDireccion(etDireccion.getText().toString());
 
-            long id = contactoDAO.insertContacto(contacto);
-            if (id != -1) {
-                Toast.makeText(this, "Contacto guardado", Toast.LENGTH_SHORT).show();
-                finish();
+            if (contactoId == -1) {
+                // Nuevo contacto
+                long id = contactoDAO.insertContacto(contacto);
+                if (id != -1) {
+                    Toast.makeText(this, "Contacto guardado", Toast.LENGTH_SHORT).show();
+                    finish();
+                }
             } else {
-                Toast.makeText(this, "Error al guardar", Toast.LENGTH_SHORT).show();
+                // Modificar contacto existente
+                contacto.setId(contactoId);
+                int filasAfectadas = contactoDAO.updateContacto(contacto);
+                if (filasAfectadas > 0) {
+                    Toast.makeText(this, "Contacto actualizado", Toast.LENGTH_SHORT).show();
+                    finish();
+                }
             }
         });
     }

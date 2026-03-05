@@ -1,51 +1,47 @@
 package com.ejemplo.gestorgastos.ui;
 
 import android.os.Bundle;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
+import androidx.fragment.app.Fragment;
+import androidx.viewpager2.adapter.FragmentStateAdapter;
+import androidx.viewpager2.widget.ViewPager2;
 import com.ejemplo.gestorgastos.R;
-import com.ejemplo.gestorgastos.dao.GastoDAO;
-import com.ejemplo.gestorgastos.model.Gasto;
-import java.util.List;
+import com.google.android.material.tabs.TabLayout;
+import com.google.android.material.tabs.TabLayoutMediator;
 
 public class ListadoGastosActivity extends AppCompatActivity {
-
-    private RecyclerView rvGastos;
-    private GastoAdapter adapter;
-    private GastoDAO gastoDAO;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_listado_gastos);
 
-        rvGastos = findViewById(R.id.rvGastos);
-        rvGastos.setLayoutManager(new LinearLayoutManager(this));
+        TabLayout tabLayout = findViewById(R.id.tabLayoutGastos);
+        ViewPager2 viewPager = findViewById(R.id.viewPagerGastos);
 
-        gastoDAO = new GastoDAO(this);
-        gastoDAO.open();
+        viewPager.setAdapter(new GastosPagerAdapter(this));
 
-        actualizarLista();
+        new TabLayoutMediator(tabLayout, viewPager, (tab, position) -> {
+            if (position == 0) tab.setText("MENSUAL");
+            else tab.setText("CUOTAS PENDIENTES");
+        }).attach();
     }
 
-    private void actualizarLista() {
-        List<Gasto> listaGastos = gastoDAO.getAllGastos();
-        adapter = new GastoAdapter(listaGastos, this); // Pasamos 'this' como context
-        rvGastos.setAdapter(adapter);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        if (gastoDAO != null) {
-            actualizarLista();
+    private static class GastosPagerAdapter extends FragmentStateAdapter {
+        public GastosPagerAdapter(@NonNull AppCompatActivity activity) {
+            super(activity);
         }
-    }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        gastoDAO.close();
+        @NonNull
+        @Override
+        public Fragment createFragment(int position) {
+            return position == 0 ? new GastosMensualFragment() : new GastosCuotasFragment();
+        }
+
+        @Override
+        public int getItemCount() {
+            return 2;
+        }
     }
 }

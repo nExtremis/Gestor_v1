@@ -43,7 +43,14 @@ public class GastoAdapter extends RecyclerView.Adapter<GastoAdapter.GastoViewHol
     public void onBindViewHolder(@NonNull GastoViewHolder holder, int position) {
         Gasto gasto = gastoList.get(position);
         holder.tvFecha.setText(dateFormat.format(gasto.getFecha()));
-        holder.tvCantidad.setText("Cant: " + gasto.getCantidad());
+        
+        // Mostrar metodo de pago y cuotas si corresponde
+        String infoPago = "Pago: " + gasto.getMetodoPago();
+        if ("Tarjeta".equals(gasto.getMetodoPago()) && gasto.getCuotas() > 1) {
+            infoPago += " (" + gasto.getCuotas() + " cuotas)";
+        }
+        holder.tvMetodoPago.setText(infoPago);
+        
         holder.tvPrecio.setText(String.format(Locale.getDefault(), "$%.2f", gasto.getPrecio()));
         holder.tvDetalles.setText(gasto.getDetalles());
         
@@ -59,7 +66,8 @@ public class GastoAdapter extends RecyclerView.Adapter<GastoAdapter.GastoViewHol
             Intent intent = new Intent(context, GastoActivity.class);
             intent.putExtra("ID", gasto.getId());
             intent.putExtra("FECHA", new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(gasto.getFecha()));
-            intent.putExtra("CANTIDAD", gasto.getCantidad());
+            intent.putExtra("METODO_PAGO", gasto.getMetodoPago());
+            intent.putExtra("CUOTAS", gasto.getCuotas());
             intent.putExtra("PRECIO", gasto.getPrecio());
             intent.putExtra("DETALLES", gasto.getDetalles());
             intent.putExtra("ES_PRODUCTO", gasto.isEsProducto());
@@ -88,13 +96,13 @@ public class GastoAdapter extends RecyclerView.Adapter<GastoAdapter.GastoViewHol
     }
 
     public static class GastoViewHolder extends RecyclerView.ViewHolder {
-        TextView tvFecha, tvCantidad, tvPrecio, tvDetalles, tvTipoGasto;
+        TextView tvFecha, tvMetodoPago, tvPrecio, tvDetalles, tvTipoGasto;
         ImageButton btnEdit, btnDelete;
 
         public GastoViewHolder(@NonNull View itemView) {
             super(itemView);
             tvFecha = itemView.findViewById(R.id.tvFecha);
-            tvCantidad = itemView.findViewById(R.id.tvCantidad);
+            tvMetodoPago = itemView.findViewById(R.id.tvCantidad); // Reusamos el ID tvCantidad para no romper el XML
             tvPrecio = itemView.findViewById(R.id.tvPrecio);
             tvDetalles = itemView.findViewById(R.id.tvDetalles);
             tvTipoGasto = itemView.findViewById(R.id.tvTipoGasto);

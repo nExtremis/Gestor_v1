@@ -6,7 +6,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "gestorgastos.db";
-    private static final int DATABASE_VERSION = 6; // Versión 6: Añade esProducto a gastos
+    private static final int DATABASE_VERSION = 8; // Versión 8: Añade cuotas a gastos
 
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -17,15 +17,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("CREATE TABLE gastos (" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 "fecha INTEGER, " +
-                "cantidad REAL, " +
+                "metodoPago TEXT, " +
+                "cuotas INTEGER DEFAULT 1, " + // Nueva columna
                 "precio REAL, " +
                 "detalles TEXT, " +
-                "esProducto INTEGER)"); // 0 para Personal, 1 para Producto
+                "esProducto INTEGER)");
 
         db.execSQL("CREATE TABLE productos (id INTEGER PRIMARY KEY AUTOINCREMENT, nombre TEXT, precioCosto REAL, precioVentaMenor REAL, precioVentaMayor REAL)");
-
         db.execSQL("CREATE TABLE contactos (id INTEGER PRIMARY KEY AUTOINCREMENT, nombre TEXT, telefono TEXT, direccion TEXT)");
-
         db.execSQL("CREATE TABLE ventas (id INTEGER PRIMARY KEY AUTOINCREMENT, productoId INTEGER, contactoId INTEGER, fecha INTEGER, cantidad REAL, precio REAL, f_option INTEGER, tipo_pago TEXT, detalles TEXT)");
     }
 

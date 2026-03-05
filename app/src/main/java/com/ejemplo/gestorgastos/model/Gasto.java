@@ -5,10 +5,13 @@ import java.util.Date;
 public class Gasto {
     private int id;
     private Date fecha;
-    private double cantidad;
+    private String metodoPago;
+    private int cuotas; // Nuevo: Cantidad de cuotas
     private double precio;
     private String detalles;
-    private boolean esProducto; // Nuevo campo
+    private boolean esProducto;
+
+    public Gasto() {}
 
     // Getters y Setters
     public int getId() { return id; }
@@ -17,8 +20,11 @@ public class Gasto {
     public Date getFecha() { return fecha; }
     public void setFecha(Date fecha) { this.fecha = fecha; }
 
-    public double getCantidad() { return cantidad; }
-    public void setCantidad(double cantidad) { this.cantidad = cantidad; }
+    public String getMetodoPago() { return metodoPago; }
+    public void setMetodoPago(String metodoPago) { this.metodoPago = metodoPago; }
+
+    public int getCuotas() { return cuotas; }
+    public void setCuotas(int cuotas) { this.cuotas = cuotas; }
 
     public double getPrecio() { return precio; }
     public void setPrecio(double precio) { this.precio = precio; }

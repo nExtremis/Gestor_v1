@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import com.ejemplo.gestorgastos.model.Venta;
 import com.ejemplo.gestorgastos.utils.DatabaseHelper;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -65,6 +66,47 @@ public class VentaDAO {
                        "ORDER BY v.fecha DESC";
         
         Cursor cursor = db.rawQuery(query, null);
+        
+        if (cursor != null && cursor.moveToFirst()) {
+            do {
+                Venta venta = new Venta();
+                venta.setId(cursor.getInt(cursor.getColumnIndexOrThrow("id")));
+                venta.setProductoId(cursor.getInt(cursor.getColumnIndexOrThrow("productoId")));
+                venta.setContactoId(cursor.getInt(cursor.getColumnIndexOrThrow("contactoId")));
+                venta.setNombreProducto(cursor.getString(cursor.getColumnIndexOrThrow("nombre_producto")));
+                venta.setNombreContacto(cursor.getString(cursor.getColumnIndexOrThrow("nombre_contacto")));
+                venta.setFecha(new Date(cursor.getLong(cursor.getColumnIndexOrThrow("fecha"))));
+                venta.setCantidad(cursor.getDouble(cursor.getColumnIndexOrThrow("cantidad")));
+                venta.setPrecio(cursor.getDouble(cursor.getColumnIndexOrThrow("precio")));
+                venta.setF(cursor.getInt(cursor.getColumnIndexOrThrow("f_option")) == 1);
+                venta.setTipoPago(cursor.getString(cursor.getColumnIndexOrThrow("tipo_pago")));
+                venta.setDetalles(cursor.getString(cursor.getColumnIndexOrThrow("detalles")));
+                ventas.add(venta);
+            } while (cursor.moveToNext());
+            cursor.close();
+        }
+        return ventas;
+    }
+
+    public List<Venta> getVentasByMonth(int month, int year) {
+        List<Venta> ventas = new ArrayList<>();
+        Calendar cal = Calendar.getInstance();
+        cal.set(year, month, 1, 0, 0, 0);
+        long start = cal.getTimeInMillis();
+        cal.set(Calendar.DAY_OF_MONTH, cal.getActualMaximum(Calendar.DAY_OF_MONTH));
+        cal.set(Calendar.HOUR_OF_DAY, 23);
+        cal.set(Calendar.MINUTE, 59);
+        cal.set(Calendar.SECOND, 59);
+        long end = cal.getTimeInMillis();
+
+        String query = "SELECT v.*, p.nombre as nombre_producto, c.nombre as nombre_contacto " +
+                       "FROM ventas v " +
+                       "INNER JOIN productos p ON v.productoId = p.id " +
+                       "LEFT JOIN contactos c ON v.contactoId = c.id " +
+                       "WHERE v.fecha >= ? AND v.fecha <= ? " +
+                       "ORDER BY v.fecha DESC";
+        
+        Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(start), String.valueOf(end)});
         
         if (cursor != null && cursor.moveToFirst()) {
             do {

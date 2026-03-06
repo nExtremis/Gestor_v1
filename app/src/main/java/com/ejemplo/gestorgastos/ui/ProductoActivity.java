@@ -13,6 +13,7 @@ public class ProductoActivity extends AppCompatActivity {
 
     private EditText etNombre, etPrecioCosto, etPrecioVentaMenor, etPrecioVentaMayor;
     private ProductoDAO productoDAO;
+    private int productoId = -1; // -1 indica nuevo producto
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,21 +29,41 @@ public class ProductoActivity extends AppCompatActivity {
         productoDAO = new ProductoDAO(this);
         productoDAO.open();
 
+        // Lógica de Edición: Cargar datos si vienen del adaptador
+        if (getIntent().hasExtra("ID")) {
+            productoId = getIntent().getIntExtra("ID", -1);
+            etNombre.setText(getIntent().getStringExtra("NOMBRE"));
+            etPrecioCosto.setText(String.valueOf(getIntent().getDoubleExtra("PRECIO_COSTO", 0.0)));
+            etPrecioVentaMenor.setText(String.valueOf(getIntent().getDoubleExtra("PRECIO_VENTA_MENOR", 0.0)));
+            etPrecioVentaMayor.setText(String.valueOf(getIntent().getDoubleExtra("PRECIO_VENTA_MAYOR", 0.0)));
+            
+            btnGuardar.setText("ACTUALIZAR PRODUCTO");
+        }
+
         btnGuardar.setOnClickListener(v -> {
-            if (etNombre.getText().toString().isEmpty()) {
+            String nombre = etNombre.getText().toString();
+            if (nombre.isEmpty()) {
                 Toast.makeText(this, "El nombre es obligatorio", Toast.LENGTH_SHORT).show();
                 return;
             }
 
             try {
                 Producto producto = new Producto();
-                producto.setNombre(etNombre.getText().toString());
+                producto.setNombre(nombre);
                 producto.setPrecioCosto(Double.parseDouble(etPrecioCosto.getText().toString()));
                 producto.setPrecioVentaMenor(Double.parseDouble(etPrecioVentaMenor.getText().toString()));
                 producto.setPrecioVentaMayor(Double.parseDouble(etPrecioVentaMayor.getText().toString()));
 
-                productoDAO.insertProducto(producto);
-                Toast.makeText(this, "Producto guardado con éxito", Toast.LENGTH_SHORT).show();
+                if (productoId == -1) {
+                    // Crear nuevo
+                    productoDAO.insertProducto(producto);
+                    Toast.makeText(this, "Producto guardado", Toast.LENGTH_SHORT).show();
+                } else {
+                    // Actualizar existente
+                    producto.setId(productoId);
+                    productoDAO.updateProducto(producto);
+                    Toast.makeText(this, "Producto actualizado", Toast.LENGTH_SHORT).show();
+                }
                 finish();
             } catch (NumberFormatException e) {
                 Toast.makeText(this, "Por favor, ingresa precios válidos", Toast.LENGTH_SHORT).show();

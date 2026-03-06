@@ -19,16 +19,28 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".ui.GastoActivity" android:label="Nuevo Gasto" />
-        <activity android:name=".ui.VentaActivity" android:label="Nueva Venta" />
-        <activity android:name=".ui.ProductoActivity" android:label="Nuevo Producto" />
-        <activity android:name=".ui.ContactoActivity" android:label="Nuevo Contacto" />
+        <activity android:name=".ui.GastoActivity" android:label="Gasto" />
+        <activity android:name=".ui.VentaActivity" android:label="Venta" />
+        <activity android:name=".ui.ProductoActivity" android:label="Producto" />
+        <activity android:name=".ui.ContactoActivity" android:label="Contacto" />
 
-        <!-- Pantallas de listado -->
         <activity android:name=".ui.ListadoGastosActivity" android:label="Historial de Gastos" />
         <activity android:name=".ui.ListadoVentasActivity" android:label="Historial de Ventas" />
-        <activity android:name=".ui.ListadoProductosActivity" android:label="Lista de Productos" />
-        <activity android:name=".ui.ListadoContactosActivity" android:label="Agenda de Contactos" />
+        <activity android:name=".ui.ListadoProductosActivity" android:label="Productos" />
+        <activity android:name=".ui.ListadoContactosActivity" android:label="Agenda" />
+
+        <!-- Nueva pantalla de Ajustes -->
+        <activity android:name=".ui.AjustesActivity" android:label="Configuración" />
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="com.ejemplo.gestorgastos.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
 
     </application>
 

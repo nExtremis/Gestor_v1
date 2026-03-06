@@ -1,12 +1,17 @@
 package com.ejemplo.gestorgastos;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
+import com.ejemplo.gestorgastos.ui.AjustesActivity;
 import com.ejemplo.gestorgastos.ui.FinanzasFragment;
 import com.ejemplo.gestorgastos.ui.HistorialesFragment;
 import com.ejemplo.gestorgastos.ui.RegistrosFragment;
@@ -20,6 +25,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
         TabLayout tabLayout = findViewById(R.id.tabLayout);
         ViewPager2 viewPager = findViewById(R.id.viewPager);
 
@@ -32,6 +40,21 @@ public class MainActivity extends AppCompatActivity {
                 case 2: tab.setText("FINANZAS"); break;
             }
         }).attach();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == R.id.action_settings) {
+            startActivity(new Intent(this, AjustesActivity.class));
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     private static class MainViewPagerAdapter extends FragmentStateAdapter {
@@ -52,7 +75,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public int getItemCount() {
-            return 3; // Ahora son 3 pestañas
+            return 3; // Volvemos a 3 pestañas principales
         }
     }
 }

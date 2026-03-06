@@ -72,12 +72,18 @@ public class GastoDAO {
     public List<Gasto> getGastosByMonth(int month, int year) {
         List<Gasto> gastos = new ArrayList<>();
         Calendar cal = Calendar.getInstance();
+        
+        // Inicio del mes (usamos el primer milisegundo)
         cal.set(year, month, 1, 0, 0, 0);
+        cal.set(Calendar.MILLISECOND, 0);
         long start = cal.getTimeInMillis();
+        
+        // Fin del mes (usamos el último milisegundo)
         cal.set(Calendar.DAY_OF_MONTH, cal.getActualMaximum(Calendar.DAY_OF_MONTH));
         cal.set(Calendar.HOUR_OF_DAY, 23);
         cal.set(Calendar.MINUTE, 59);
         cal.set(Calendar.SECOND, 59);
+        cal.set(Calendar.MILLISECOND, 999);
         long end = cal.getTimeInMillis();
 
         String selection = "fecha >= ? AND fecha <= ?";

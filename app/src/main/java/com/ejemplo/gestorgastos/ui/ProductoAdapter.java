@@ -45,6 +45,7 @@ public class ProductoAdapter extends RecyclerView.Adapter<ProductoAdapter.Produc
         holder.tvPrecioVentaMenor.setText(String.format(Locale.getDefault(), "$%.2f", producto.getPrecioVentaMenor()));
         holder.tvPrecioVentaMayor.setText(String.format(Locale.getDefault(), "$%.2f", producto.getPrecioVentaMayor()));
 
+        // CORRECCIÓN: Pasar todos los datos al editar
         holder.btnEdit.setOnClickListener(v -> {
             Intent intent = new Intent(context, ProductoActivity.class);
             intent.putExtra("ID", producto.getId());
@@ -58,15 +59,15 @@ public class ProductoAdapter extends RecyclerView.Adapter<ProductoAdapter.Produc
         holder.btnDelete.setOnClickListener(v -> {
             new AlertDialog.Builder(context)
                 .setTitle("Eliminar Producto")
-                .setMessage("¿Estás seguro de que quieres eliminar " + producto.getNombre() + "?")
-                .setPositiveButton("Sí", (dialog, which) -> {
+                .setMessage("¿Estás seguro de que quieres eliminar " + producto.getNombre() + "? Esta acción podría afectar los registros de ventas existentes.")
+                .setPositiveButton("Sí, ELIMINAR", (dialog, which) -> {
                     productoDAO.deleteProducto(producto.getId());
                     productoList.remove(position);
                     notifyItemRemoved(position);
                     notifyItemRangeChanged(position, productoList.size());
                     Toast.makeText(context, "Producto eliminado", Toast.LENGTH_SHORT).show();
                 })
-                .setNegativeButton("No", null)
+                .setNegativeButton("NO", null)
                 .show();
         });
     }

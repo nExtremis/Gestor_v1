@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F5F5F5">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="WHATSAPP"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:textColor="#757575"
+            android:layout_marginBottom="8dp" />
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="24dp"
+            app:cardCornerRadius="8dp">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Prefijo país (ej: 549)"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etPrefijoWsp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="number" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <Button
+                    android:id="@+id/btnGuardarPrefijo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end"
+                    android:layout_marginTop="8dp"
+                    android:text="GUARDAR"
+                    style="@style/Widget.MaterialComponents.Button.TextButton"/>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="DATOS"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:textColor="#757575"
+            android:layout_marginBottom="8dp" />
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="24dp"
+            app:cardCornerRadius="8dp">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="8dp">
+
+                <Button
+                    android:id="@+id/btnExportarCSV"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="EXPORTAR A CSV (EXCEL)"
+                    android:backgroundTint="#388E3C"
+                    android:drawableStart="@android:drawable/ic_menu_save"
+                    android:paddingStart="16dp"
+                    android:layout_marginBottom="8dp"/>
+
+                <Button
+                    android:id="@+id/btnBackupDB"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="COPIA DE SEGURIDAD (.DB)"
+                    android:backgroundTint="#1976D2"
+                    android:drawableStart="@android:drawable/ic_menu_share"
+                    android:paddingStart="16dp"/>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="PELIGRO"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:textColor="#D32F2F"
+            android:layout_marginBottom="8dp" />
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="8dp">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="8dp">
+
+                <Button
+                    android:id="@+id/btnBorrarTodo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="BORRAR TODA LA BASE DE DATOS"
+                    android:backgroundTint="#D32F2F"
+                    android:drawableStart="@android:drawable/ic_menu_delete"
+                    android:paddingStart="16dp"/>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Versión 1.0.8"
+            android:gravity="center"
+            android:layout_marginTop="32dp"
+            android:textSize="12sp"
+            android:textColor="#BDBDBD"/>
+
+    </LinearLayout>
+</ScrollView>

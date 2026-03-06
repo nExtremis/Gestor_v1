@@ -96,23 +96,31 @@ public class FinanzasFragment extends Fragment {
             Calendar calG = Calendar.getInstance(); calG.setTime(g.getFecha());
             double valorCuota = g.getPrecio() / g.getCuotas();
 
-            // 1. Calculo para el mes seleccionado (Proyección o Historial)
+            // 1. Lógica para el mes seleccionado
             if (g.getCuotas() > 1) {
+                // Cálculo de vigencia de cuota
                 int diffMeses = (anioSeleccionado - calG.get(Calendar.YEAR)) * 12 + (mesSeleccionado - calG.get(Calendar.MONTH));
                 if (diffMeses >= 0 && diffMeses < g.getCuotas()) {
                     totalCuotasMes += valorCuota;
-                    if (g.isEsProducto()) totalInsumos += valorCuota; else totalPersonal += valorCuota;
+                    // CORRECCIÓN: Sumamos solo la cuota al rubro correspondiente
+                    if (g.isEsProducto()) totalInsumos += valorCuota; 
+                    else totalPersonal += valorCuota;
                 }
-            } else if (calG.get(Calendar.MONTH) == mesSeleccionado && calG.get(Calendar.YEAR) == anioSeleccionado) {
-                if ("Tarjeta".equals(g.getMetodoPago())) totalTarjetaUnPago += g.getPrecio();
-                else totalEfectivo += g.getPrecio();
-                if (g.isEsProducto()) totalInsumos += g.getPrecio(); else totalPersonal += g.getPrecio();
+            } else {
+                // Gasto en un solo pago: solo si es del mes seleccionado
+                if (calG.get(Calendar.MONTH) == mesSeleccionado && calG.get(Calendar.YEAR) == anioSeleccionado) {
+                    if ("Tarjeta".equals(g.getMetodoPago())) totalTarjetaUnPago += g.getPrecio();
+                    else totalEfectivo += g.getPrecio();
+
+                    if (g.isEsProducto()) totalInsumos += g.getPrecio(); 
+                    else totalPersonal += g.getPrecio();
+                }
             }
 
-            // 2. Calculo de Deuda Total Pendiente (de HOY en adelante)
+            // 2. Cálculo de Deuda Total (Capital que falta pagar de hoy en adelante)
             if (g.getCuotas() > 1) {
                 int cuotasPagadasHastaHoy = (hoy.get(Calendar.YEAR) - calG.get(Calendar.YEAR)) * 12 + (hoy.get(Calendar.MONTH) - calG.get(Calendar.MONTH));
-                if (cuotasPagadasHastaHoy < 0) cuotasPagadasHastaHoy = -1; // Aun no empezo a pagar
+                if (cuotasPagadasHastaHoy < 0) cuotasPagadasHastaHoy = -1;
                 
                 int cuotasRestantes = g.getCuotas() - (cuotasPagadasHastaHoy + 1);
                 if (cuotasRestantes > 0) {
